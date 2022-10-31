@@ -65,8 +65,7 @@ namespace dtp5_contacts_0
                     }
                 }
             }
-            public Person(string[] attrs)
-            {
+            public Person(string[] attrs) {
                 persname = attrs[0];
                 surname = attrs[1];
                 string[] phones = attrs[2].Split(';');
@@ -75,14 +74,12 @@ namespace dtp5_contacts_0
                 addressList = addresses;
                 birthdate = attrs[4];
             }
-            public void Print()
-            {
+            public void Print() {
                 string phones = Collapse(phoneList);
                 string addresses = Collapse(addressList);
                 Console.WriteLine($"{persname} {surname}; {phones}; {addresses}; {birthdate} ");
             }
-            public string FileRow()
-            {
+            public string FileRow() {
                 string phones = Collapse(phoneList, toFile: true);
                 string addresses = Collapse(addressList, toFile: true);
                 return $"{persname}|{surname}|{phones}|{addresses}|{birthdate}";
@@ -124,7 +121,8 @@ namespace dtp5_contacts_0
                         WriteContacListToFile(lastFileName);
                     }
                     else {
-                        Console.WriteLine("Not yet implemented: save /file/");
+                        lastFileName = commandLine[1];
+                        WriteContacListToFile(lastFileName);
                     }
                 }
                 else if (commandLine[0] == "new" ) {
@@ -144,20 +142,16 @@ namespace dtp5_contacts_0
             } while (commandLine[0] != "quit");
         }
 
-        private static void InsertPersonIntoContactList(Person p)
-        {
-            for (int ix = 0; ix < contactList.Length; ix++)
-            {
-                if (contactList[ix] == null)
-                {
+        private static void InsertPersonIntoContactList(Person p) {
+            for (int ix = 0; ix < contactList.Length; ix++) {
+                if (contactList[ix] == null) {
                     contactList[ix] = p;
                     break;
                 }
             }
         }
 
-        private static void PrintHelp()
-        {
+        private static void PrintHelp() {
             Console.WriteLine("Avaliable commands: ");
             Console.WriteLine("  delete       - emtpy the contact list");
             Console.WriteLine("  delete /persname/ /surname/ - delete a person");
@@ -171,25 +165,19 @@ namespace dtp5_contacts_0
             Console.WriteLine();
         }
 
-        private static void WriteContacListToFile(string lastFileName)
-        {
-            using (StreamWriter outfile = new StreamWriter(lastFileName))
-            {
-                foreach (Person p in contactList)
-                {
+        private static void WriteContacListToFile(string lastFileName) {
+            using (StreamWriter outfile = new StreamWriter(lastFileName)) {
+                foreach (Person p in contactList) {
                     if (p != null)
                         outfile.WriteLine(p.FileRow());
                 }
             }
         }
 
-        private static void ReadContactListFromFile(string lastFileName)
-        {
-            using (StreamReader infile = new StreamReader(lastFileName))
-            {
+        private static void ReadContactListFromFile(string lastFileName) {
+            using (StreamReader infile = new StreamReader(lastFileName)) {
                 string line;
-                while ((line = infile.ReadLine()) != null)
-                {
+                while ((line = infile.ReadLine()) != null) {
                     Console.WriteLine(line);
                     string[] attrs = line.Split('|');
                     Person p = new Person(attrs);
