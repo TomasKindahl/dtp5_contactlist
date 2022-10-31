@@ -6,9 +6,11 @@ namespace dtp5_contacts_0
     class MainClass
     {
         static Person[] contactList = new Person[100];
-        static string Collapse(string[] strArr)
+        static string Collapse(string[] strArr, bool toFile = false)
         {
             string result;
+            string joint;
+            if (toFile) joint = ";"; else joint = ", ";
             result = strArr[0];
             for(int i = 1; i < strArr.Length; i++)
             {
@@ -17,33 +19,50 @@ namespace dtp5_contacts_0
             }
             return result;
         }
+        static string Input(string prompt) {
+            Console.Write(prompt);
+            return Console.ReadLine();
+        }
         class Person
         {
             public string persname, surname,  birthdate;
             public string[] phoneList = new string[20], addressList = new string[20];
             public Person(bool ask = false) {
                 if (ask) {
-                    Console.Write("personal name: ");
-                    persname = Console.ReadLine();
-                    Console.Write("surname: ");
-                    surname = Console.ReadLine();
+                    persname = Input("personal name: ");
+                    surname = Input("surname: ");
                     string phone;
                     do
                     {
-                        Console.Write("phone (enter if end): ");
-                        phone = Console.ReadLine();
+                        phone = Input("phone (enter if no more): ");
                         if (phone == "") break;
-                        for (int i = 0; i < phoneList.Length; i++)
-                            if (phoneList[i] == null)
-                            {
-                                phoneList[i] = phone;
-                                break;
-                            }
+                        SavePhone(phone);
                     } while (phone != "");
-                    Console.Write("address: ");
-                    addressList[0] = Console.ReadLine();
-                    Console.Write("birthdate: ");
-                    birthdate = Console.ReadLine();
+                    string address;
+                    do
+                    {
+                        address = Input("address (enter if no more): ");
+                        if (address == "") break;
+                        SaveAddress(address);
+                    } while (address != "");
+                    birthdate = Input("birthdate: ");
+                }
+            }
+
+            private void SavePhone(string phone) {
+                for (int i = 0; i < phoneList.Length; i++) {
+                    if (phoneList[i] == null) {
+                        phoneList[i] = phone;
+                        break;
+                    }
+                }
+            }
+            private void SaveAddress(string address) {
+                for (int i = 0; i < addressList.Length; i++) {
+                    if (addressList[i] == null) {
+                        addressList[i] = address;
+                        break;
+                    }
                 }
             }
             public Person(string[] attrs)
@@ -61,6 +80,12 @@ namespace dtp5_contacts_0
                 string phones = Collapse(phoneList);
                 string addresses = Collapse(addressList);
                 Console.WriteLine($"{persname} {surname}; {phones}; {addresses}; {birthdate} ");
+            }
+            public string FileRow()
+            {
+                string phones = Collapse(phoneList, toFile: true);
+                string addresses = Collapse(addressList, toFile: true);
+                return $"{persname}|{surname}|{phones}|{addresses}|{birthdate}";
             }
         }
         public static void Main(string[] args)
@@ -153,7 +178,7 @@ namespace dtp5_contacts_0
                 foreach (Person p in contactList)
                 {
                     if (p != null)
-                        outfile.WriteLine($"{p.persname};{p.surname};{p.phoneList};{p.addressList};{p.birthdate}");
+                        outfile.WriteLine(p.FileRow());
                 }
             }
         }
