@@ -6,19 +6,42 @@ namespace dtp5_contacts_0
     class MainClass
     {
         static Person[] contactList = new Person[100];
+        static string Collapse(string[] strArr)
+        {
+            string result;
+            result = strArr[0];
+            for(int i = 1; i < strArr.Length; i++)
+            {
+                if(strArr[i] != null)
+                    result = result + ", " + strArr[i];
+            }
+            return result;
+        }
         class Person
         {
-            public string persname, surname, phone, address, birthdate;
+            public string persname, surname,  birthdate;
+            public string[] phoneList = new string[20], addressList = new string[20];
             public Person(bool ask = false) {
                 if (ask) {
                     Console.Write("personal name: ");
                     persname = Console.ReadLine();
                     Console.Write("surname: ");
                     surname = Console.ReadLine();
-                    Console.Write("phone: ");
-                    phone = Console.ReadLine();
+                    string phone;
+                    do
+                    {
+                        Console.Write("phone (enter if end): ");
+                        phone = Console.ReadLine();
+                        if (phone == "") break;
+                        for (int i = 0; i < phoneList.Length; i++)
+                            if (phoneList[i] == null)
+                            {
+                                phoneList[i] = phone;
+                                break;
+                            }
+                    } while (phone != "");
                     Console.Write("address: ");
-                    address = Console.ReadLine();
+                    addressList[0] = Console.ReadLine();
                     Console.Write("birthdate: ");
                     birthdate = Console.ReadLine();
                 }
@@ -28,9 +51,16 @@ namespace dtp5_contacts_0
                 persname = attrs[0];
                 surname = attrs[1];
                 string[] phones = attrs[2].Split(';');
-                phone = phones[0];
+                phoneList = phones;
                 string[] addresses = attrs[3].Split(';');
-                address = addresses[0];
+                addressList = addresses;
+                birthdate = attrs[4];
+            }
+            public void Print()
+            {
+                string phones = Collapse(phoneList);
+                string addresses = Collapse(addressList);
+                Console.WriteLine($"{persname} {surname}; {phones}; {addresses}; {birthdate} ");
             }
         }
         public static void Main(string[] args)
@@ -45,6 +75,14 @@ namespace dtp5_contacts_0
                 commandLine = Console.ReadLine().Split(' ');
                 if (commandLine[0] == "quit" ) {
                     Console.WriteLine("Not yet implemented: safe quit");
+                }
+                else if (commandLine[0] == "list")
+                {
+                    // static method Something(Person[] contactList) TBD
+                    foreach (Person p in contactList) {
+                        if (p != null) 
+                            p.Print();
+                    }
                 }
                 else if (commandLine[0] == "load") {
                     if (commandLine.Length < 2) {
@@ -115,7 +153,7 @@ namespace dtp5_contacts_0
                 foreach (Person p in contactList)
                 {
                     if (p != null)
-                        outfile.WriteLine($"{p.persname};{p.surname};{p.phone};{p.address};{p.birthdate}");
+                        outfile.WriteLine($"{p.persname};{p.surname};{p.phoneList};{p.addressList};{p.birthdate}");
                 }
             }
         }
